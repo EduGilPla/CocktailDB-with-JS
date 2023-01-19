@@ -1,6 +1,4 @@
 const DOM = {
-    // numberInput: document.getElementById("inputBoton"),
-    // searchButton: document.getElementById("searchCoctel"),
     randomButton: document.getElementById("randomCoctel"),    
     ingredientsSection: document.getElementById("ingredientsSection"),
     ingredientsLabel: document.getElementById("ingredientsLabel"),
