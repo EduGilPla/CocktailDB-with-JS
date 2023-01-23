@@ -28,6 +28,7 @@ async function showRandom(){
     }, 2000);
 }
 function addMainLoader(){
+    DOM.randomButton.disabled = true;
     document.getElementById("mainLoader").classList.add("mainLoader");
     document.getElementById("content").classList.add("d-none");
 }
@@ -91,6 +92,7 @@ function removeLoaders(){
 function showCards(){
     let cards = Array.prototype.slice.call(document.getElementsByClassName("card"));
     cards.forEach(e => e.classList.remove("d-none"));
+    DOM.randomButton.disabled = false;
 }
 async function generateIngredientSection(ingredients){
     DOM.ingredientsLabel.textContent = "Ingredientes";
