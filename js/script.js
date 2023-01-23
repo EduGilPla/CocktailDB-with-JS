@@ -13,16 +13,27 @@ const API = {
 })();
 
 async function showRandom(){
+    addMainLoader();
     let cocktail = await searchCocktail(API.random);
     let ingredients = getIngredients(cocktail);
+    setTimeout(() => {
+        removeMainLoader();
+    }, 1000);
     generateCocktailSection();
     generateIngredientSection(ingredients);
     showCocktail(cocktail,ingredients);
     setTimeout(() => {
         removeLoaders();
         showCards();
-    }, 1500);
-    
+    }, 2000);
+}
+function addMainLoader(){
+    document.getElementById("mainLoader").classList.add("mainLoader");
+    document.getElementById("content").classList.add("d-none");
+}
+function removeMainLoader(){
+    document.getElementById("mainLoader").classList.remove("mainLoader");
+    document.getElementById("content").classList.remove("d-none");
 }
 async function searchCocktail(url){
     let foundCocktail;

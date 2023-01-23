@@ -16,19 +16,24 @@
             </div>
         </nav>          
     </header>
-    <main class="row">
-        <div class="px-5 pt-3">
-            <button id="randomCoctel" class="btn btn-light">Aleatorio</button>
-        </div>
-        <section class="col-3 mx-4 mb-3" id="cocktailSection">
-            
-        </section>
-        <div class="m-0 col-md-8 mb-3">
-            <h3 id="ingredientsLabel" class="h1 justify-content-center d-flex m-0"></h3>
-            <section class="container d-flex justify-content-center flex-wrap" id="ingredientsSection">
+    <main>
+            <div class="px-5 pt-3">
+                <button id="randomCoctel" class="btn btn-light">Aleatorio</button>
+            </div>
+            <div id="mainLoader">
+
+            </div>
+            <div id="content" class="row d-none">
+                <section class="col-3 mx-4 mb-3" id="cocktailSection">
                 
-            </section>
-        </div>
+                </section>
+                <div class="m-0 col-md-8 mb-3">
+                    <h3 id="ingredientsLabel" class="h1 justify-content-center d-flex m-0"></h3>
+                    <section class="container d-flex justify-content-center flex-wrap" id="ingredientsSection">
+                        
+                    </section>
+                </div>
+            </div>
     </main>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/script.js"></script>
