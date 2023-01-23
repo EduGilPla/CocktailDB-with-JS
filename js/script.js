@@ -13,9 +13,16 @@ const API = {
 })();
 
 async function showRandom(){
-    generateCocktailSection();
     let cocktail = await searchCocktail(API.random);
-    showCocktail(cocktail);
+    let ingredients = getIngredients(cocktail);
+    generateCocktailSection();
+    generateIngredientSection(ingredients);
+    showCocktail(cocktail,ingredients);
+    setTimeout(() => {
+        removeLoaders();
+        showCards();
+    }, 1500);
+    
 }
 async function searchCocktail(url){
     let foundCocktail;
@@ -28,8 +35,14 @@ async function searchCocktail(url){
     .then(json => {
         return json.drinks[0];
     })
-    .then(cocktail => {foundCocktail = cocktail});
+    .then(cocktail => {foundCocktail = cocktail})
+    .catch(response => {
+        foundCocktail.strDrinkThumb = "./img/Image_not_available.png";
+        foundCocktail.strInstructions = "No se ha podido conseguir un cóctel";
+        foundCocktail.strDrink = "No encontrado";
+    });
     return foundCocktail;
+    
 }
 function generateCocktailSection(){
     clearCocktail();
@@ -45,7 +58,7 @@ function generateCocktailSection(){
     cocktailImg.id = "cocktailImg";
     cocktailInstructions.id = "cocktailInstructions";
     loader.id = "cocktailLoader";
-    card.classList.add("card","mt-5","hiddenElement");
+    card.classList.add("card","mt-5","d-none");
     loader.classList.add("loader");
     cocktailImg.classList.add("card-img");
     cardBody.classList.add("card-body","p-0","px-3","pt-2");
@@ -60,41 +73,63 @@ function generateCocktailSection(){
     cardBody.insertAdjacentElement("beforeend",cocktailInstructions);
 
 }
+function removeLoaders(){
+    let loaders = Array.prototype.slice.call(document.getElementsByClassName("loader"));
+    loaders.forEach(e => e.classList.add("d-none"));
+}
+function showCards(){
+    let cards = Array.prototype.slice.call(document.getElementsByClassName("card"));
+    cards.forEach(e => e.classList.remove("d-none"));
+}
+async function generateIngredientSection(ingredients){
+    DOM.ingredientsLabel.textContent = "Ingredientes";
+    ingredients.forEach(ingredient => {
+        let loader = document.createElement("div");
+        let card = document.createElement("div");
+        let cardBody = document.createElement("div");
+        let ingredientName = document.createElement("h5");
+        let ingredientImg = document.createElement("img");
+
+        DOM.ingredientsSection.insertAdjacentElement("beforeend",loader);
+        DOM.ingredientsSection.insertAdjacentElement("beforeend",card);
+        card.insertAdjacentElement("beforeend",ingredientImg); 
+        card.insertAdjacentElement("beforeend",cardBody);
+        cardBody.insertAdjacentElement("beforeend",ingredientName);
+
+        loader.classList.add("loader","m-2");
+        card.classList.add("card","m-2","d-none"); 
+        card.style = "min-width: 8rem; max-width:12rem;";
+        
+        ingredientName.classList.add("card-title");
+        ingredientName.textContent = ingredient;
+
+        ingredientImg.classList.add("card-img-top","ingredientImg");
+        cardBody.classList.add("card-body");
+    });
+}
 function loadCocktail(cocktail){
-    document.getElementById("cocktailLoader").classList.add("hiddenElement");
     document.getElementById("cocktailName").textContent = cocktail.strDrink;
     document.getElementById("cocktailInstructions").textContent = cocktail.strInstructions;
     document.getElementById("cocktailImg").src = cocktail.strDrinkThumb;
-    document.getElementById("cocktailCard").classList.remove("hiddenElement");
 }
-async function showCocktail(cocktail) {
-        loadCocktail(cocktail)
-        ingredientsArray = getIngredients(cocktail);
-
-        DOM.ingredientsLabel.textContent = "Ingredientes";
-        ingredientsArray.forEach(ingredient => {
-            let card = document.createElement("div");
-            let cardBody = document.createElement("div");
-            let ingredientName = document.createElement("h5");
-            let ingredientImg = document.createElement("img");
-
-            DOM.ingredientsSection.insertAdjacentElement("beforeend",card);
-            card.insertAdjacentElement("beforeend",ingredientImg); 
-            card.insertAdjacentElement("beforeend",cardBody);
-            cardBody.insertAdjacentElement("beforeend",ingredientName);
-
-            card.classList.add("card","m-2"); 
-            card.style = "min-width: 8rem; max-width:12rem;";
-            
-            ingredientName.classList.add("card-title");
-            ingredientName.textContent = ingredient;
-
-            ingredientImg.classList.add("card-img-top");
-            fetch("https://www.thecocktaildb.com/images/ingredients/" + ingredient + ".png")
-                .then(response => response.blob())
-                .then(blob => ingredientImg.src = URL.createObjectURL(blob))
-            cardBody.classList.add("card-body");
-        }); 
+function showCocktail(cocktail,ingredients) {
+        loadCocktail(cocktail);
+        loadIngredients(ingredients);
+}
+async function loadIngredients(ingredients){
+    let promises = []
+    ingredients.forEach(ingredient => {
+        promises.push(fetch("https://www.thecocktaildb.com/images/ingredients/"+ ingredient + "-Small.png")
+        .then(response => response.blob()))
+    });
+    let images = Array.prototype.slice.call(document.getElementsByClassName("ingredientImg"));
+    let index = 0;
+    Promise.all(promises)
+    .then(response => {
+        images.forEach(e => {
+            e.src = URL.createObjectURL(response[index++]);
+        });
+    });
 }
 function getIngredients(cocktail){
     return Object.entries(cocktail)
